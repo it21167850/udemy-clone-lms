@@ -1,0 +1,33 @@
+version: "3.8"
+name: udemy_clone
+services:
+  mysql_db:
+    # image: yanji2510/udemy-clone-mysql-db:latest
+    image: mysql:latest
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: 'udemy_clone_db'
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456
+    expose:
+      - 1234
+    volumes:
+      - mysql-data:/var/lib/mysql
+    mem_limit: 2g
+    memswap_limit: 3g
+  stripe_cli:
+    # image: yanji2510/udemy-clone-stripe-cli:latest
+    image: stripe/stripe-cli:latest
+    container_name: stripe_cli
+    restart: always
+    env_file:
+      - ../../.env    
+    command: listen --forward-to http://host.docker.internal:3000/api/webhook --skip-verify
+    mem_limit: 2g
+    memswap_limit: 3g
+volumes:
+  mysql-data:
